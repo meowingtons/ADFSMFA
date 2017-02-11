@@ -24,7 +24,7 @@ namespace ADFSEmailMFA
         {
             RandomNumber = GetPin;
             SendEmail(EmailAddress, AuthProviderSettings.emailSubject , RandomNumber);
-            WriteLog("BeginAuthentication - GetPin equals " + RandomNumber);
+            WriteLog(EmailAddress + " - Sending OTP to user");
             return new AdapterPresentation();
         }
 
@@ -32,8 +32,6 @@ namespace ADFSEmailMFA
         {
             //get identityclaim value
             string mail = identityClaim.Value;
-
-            //if 'MultiFactorAuthMethod' attribute in AD equals 'email' and 'email' attribute in AD is populated return true, else false
             SearchResultCollection Results = null;
             string path = AuthProviderSettings.ldapConnectionString;
             DirectoryEntry DirEntry = new DirectoryEntry(path, AuthProviderSettings.ldapBindUserName, AuthProviderSettings.ldapBindPassword, AuthenticationTypes.Secure);
@@ -54,7 +52,7 @@ namespace ADFSEmailMFA
             else
             {
                 EmailAddress = mail;
-                WriteLog("Found User, Method is available");
+                WriteLog("Found " + EmailAddress + ", Method is available");
                 return true;
             }
         }
@@ -82,7 +80,6 @@ namespace ADFSEmailMFA
 
         public void OnAuthenticationPipelineUnload()
         {
-            File.WriteAllText(@"C:\testadfsconfig.json", JsonConvert.SerializeObject(AuthProviderSettings, Formatting.Indented));
         }
 
         public IAdapterPresentation OnError(HttpListenerRequest request, ExternalAuthenticationException ex)
@@ -96,18 +93,17 @@ namespace ADFSEmailMFA
             //get email for user, generate OTP, send OTP to the email, verify OTP typed in equals what was generated
             claims = null;
             IAdapterPresentation result = null;
-
-            WriteLog("TryEndAuthentication - GetPin equals " + RandomNumber);
             string suppliedPin = proofData.Properties["PIN"].ToString();
-            WriteLog("TryEndAuthentication - suppliedPin equals " + suppliedPin);
             
             if (RandomNumber == suppliedPin)
             {
                 Claim claim = new Claim("http://schemas.microsoft.com/ws/2008/06/identity/claims/authenticationmethod", "http://schemas.microsoft.com/ws/2012/12/authmethod/otp");
                 claims = new Claim[] { claim };
+                WriteLog(EmailAddress + " - Authenticated Successfully");
             }
             else
             {
+                WriteLog(EmailAddress + "Authentication Failed");
                 result = new AdapterPresentation("Authentication Failed.", false);
             }
             return result;
@@ -115,22 +111,16 @@ namespace ADFSEmailMFA
 
         public void WriteLog(string TextToWrite)
         {
-            StreamWriter LogFile = new StreamWriter(@"C:\ADFSLogFile.txt", true);
+            StreamWriter LogFile = new StreamWriter(@"C:\ADFSMFALogFile.txt", true);
             LogFile.WriteLine(TextToWrite);
             LogFile.Close();
         }
 
-        /// private methods
         private static void LoadSettings(Stream FileToLoad)
         {
-            //load stream and read entire thing as string
             StreamReader configFileStream = new StreamReader(FileToLoad);
             string configFile = configFileStream.ReadToEnd();
-
-            //deserialize the json string into object
-            AuthProviderSettings = JsonConvert.DeserializeObject<MFASettings>(configFile);
-
-            //close the streamreader
+            AuthProviderSettings = JsonConvert.DeserializeObject<MFASettings>(configFile); //deserialize the json string into object
             configFileStream.Close();
         }
 
@@ -163,7 +153,7 @@ namespace ADFSEmailMFA
         private void SendEmail(string sendToEmail, string emailSubject, string pin)
         {
             MailAddress fromAddress = new MailAddress( AuthProviderSettings.fromEmailAddress, AuthProviderSettings.fromEmailAddressName);
-            MailAddress toAddress = new MailAddress(sendToEmail, "To Name");
+            MailAddress toAddress = new MailAddress(sendToEmail, sendToEmail);
             string fromPassword = AuthProviderSettings.fromEmailAddressPassword;
             string subject = emailSubject;
             string body = AuthProviderSettings.emailBody + pin;
