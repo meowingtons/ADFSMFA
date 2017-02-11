@@ -1,0 +1,12 @@
+﻿{
+  "ldapConnectionString": "",
+  "ldapBindUserName": "",
+  "ldapBindPassword": "",
+  "fromEmailAddress": "",
+  "fromEmailAddressName": "",
+  "fromEmailAddressPassword": "",
+  "mailServer": "",
+  "mailServerPort": 587,
+  "emailSubject": "",
+  "emailBody": ""
+}
