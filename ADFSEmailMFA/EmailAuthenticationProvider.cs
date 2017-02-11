@@ -14,7 +14,6 @@ namespace ADFSEmailMFA
     {
         public IAuthenticationAdapterMetadata Metadata
         {
-            //request 'email' attribute from ADFS
             get
             {
                 return new AuthenticationAdapterMetadata();
