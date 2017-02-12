@@ -8,5 +8,6 @@
   "mailServer": "",
   "mailServerPort": 587,
   "emailSubject": "",
-  "emailBody": ""
+  "emailBody": "",
+  "logFilePath": ""
 }

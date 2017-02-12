@@ -61,9 +61,7 @@ namespace ADFSEmailMFA
         {
             if (AuthProviderSettingsLoaded == false)
             {
-                WriteLog("Serializing json config file");
                 LoadSettings(configData.Data);
-
                 WriteLog("Loaded settings are:");
                 foreach (var prop in AuthProviderSettings.GetType().GetProperties())
                 {
@@ -111,7 +109,8 @@ namespace ADFSEmailMFA
 
         public void WriteLog(string TextToWrite)
         {
-            StreamWriter LogFile = new StreamWriter(@"C:\ADFSMFALogFile.txt", true);
+            string path = AuthProviderSettings.logFilePath;
+            StreamWriter LogFile = new StreamWriter(path, true);
             LogFile.WriteLine(TextToWrite);
             LogFile.Close();
         }
@@ -189,6 +188,7 @@ namespace ADFSEmailMFA
                 public int mailServerPort { get; set; }
                 public string emailSubject { get; set; }
                 public string emailBody { get; set; }
+                public string logFilePath { get; set; }
         }
     }
 
