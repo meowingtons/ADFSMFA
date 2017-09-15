@@ -33,15 +33,14 @@
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>ADFSEmailMFAKey.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>ADFSEmailMFA.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.IdentityServer.Web">
-      <HintPath>..\..\..\..\Desktop\Microsoft.IdentityServer.Web.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\Desktop\Microsoft.IdentityServer.Web.dll</HintPath>
     </Reference>
-    <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=10.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.10.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -56,11 +55,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AdapterPresentation.cs" />
+    <Compile Include="AuthenticationAdapterMetadata.cs" />
+    <Compile Include="Configuration.cs" />
+    <Compile Include="CryptoHelper.cs" />
     <Compile Include="EmailAuthenticationProvider.cs" />
+    <Compile Include="PINGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ADFSEmailMFAKey.pfx" />
+    <None Include="ADFSEmailMFA.pfx" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
